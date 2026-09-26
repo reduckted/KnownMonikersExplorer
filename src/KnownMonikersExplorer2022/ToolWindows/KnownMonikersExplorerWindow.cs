@@ -133,7 +133,6 @@ namespace KnownMonikersExplorer.ToolWindows
             {
                 // Fire-and-forget the debounced search
                 _ = PerformDebouncedSearchAsync();
-                base.OnStartSearch();
             }
 
             private async Task PerformDebouncedSearchAsync()
@@ -186,6 +185,9 @@ namespace KnownMonikersExplorer.ToolWindows
                 finally
                 {
                     SearchResults = resultCount;
+                    // The base `OnStartSearch` method actually completes the search,
+                    // so we call it here instead of in our override of `OnStartSearch`.
+                    base.OnStartSearch();
                 }
             }
 
