@@ -63,6 +63,8 @@ namespace KnownMonikersExplorer.ToolWindows
                     return null;
                 }
 
+                ThreadHelper.ThrowIfNotOnUIThread();
+
                 // Cancel any pending debounced search
                 CancellationToken ct;
                 lock (_debounceLock)
@@ -151,11 +153,12 @@ namespace KnownMonikersExplorer.ToolWindows
 
                 try
                 {
+                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(_debounceCt);
+
                     var searchString = SearchQuery.SearchString?.Trim().ToLowerInvariant() ?? string.Empty;
                     KnownMonikersExplorerControl control;
                     IReadOnlyList<KnownMonikersViewModel> allMonikers;
 
-                    await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(_debounceCt);
                     control = _toolWindow.Content as KnownMonikersExplorerControl;
 
                     if (control != null)
